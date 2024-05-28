@@ -5,6 +5,7 @@
 #include <Keyboard.h>
 #include <Adafruit_CircuitPlayground.h>
 Adafruit_MPU6050 mpu;
+bool debug = 1; // set true for debug
 
 enum MovementType
 {
@@ -77,76 +78,101 @@ MovementType determineMovement(sensors_event_t a, sensors_event_t g)
 void panRight()
 {
   Serial.println("pan right");
-  Mouse.press(MOUSE_MIDDLE);
-  Mouse.move(10, 0, 0); // Move mouse right
-  delay(100);
-  Mouse.release(MOUSE_MIDDLE);
+  if (!debug)
+  {
+    Mouse.press(MOUSE_MIDDLE);
+    Mouse.move(10, 0, 0); // Move mouse right
+    delay(100);
+    Mouse.release(MOUSE_MIDDLE);
+  }
 }
 
 void panLeft()
 {
   Serial.println("pan left");
-  Mouse.press(MOUSE_MIDDLE);
-  Mouse.move(-10, 0, 0); // Move mouse left
-  delay(100);
-  Mouse.release(MOUSE_MIDDLE);
+  if (!debug)
+  {
+    Mouse.press(MOUSE_MIDDLE);
+    Mouse.move(-10, 0, 0); // Move mouse left
+    delay(100);
+    Mouse.release(MOUSE_MIDDLE);
+  }
 }
 void panUp()
 {
   // pan up implimentation
   Serial.println("pan up");
-  Mouse.press(MOUSE_MIDDLE);
-  Mouse.move(0, 10, 0); // Move mouse right
-  delay(100);
-  Mouse.release(MOUSE_MIDDLE);
+  if (!debug)
+  {
+    .press(MOUSE_MIDDLE);
+    Mouse.move(0, 10, 0); // Move mouse right
+    delay(100);
+    Mouse.release(MOUSE_MIDDLE);
+  }
 }
 void panDown()
 {
   // pan down
   Serial.println("pan Down");
-  Mouse.press(MOUSE_MIDDLE);
-  Mouse.move(0, -10, 0); // Move mouse right
-  delay(100);
-  Mouse.release(MOUSE_MIDDLE);
+  if (!debug)
+  {
+    Mouse.press(MOUSE_MIDDLE);
+    Mouse.move(0, -10, 0); // Move mouse right
+    delay(100);
+    Mouse.release(MOUSE_MIDDLE);
+  }
 }
 void rotateClockwise()
 {
   Serial.println("rotate clockwise ");
-  Keyboard.press(KEY_LEFT_SHIFT);
-  Mouse.press(MOUSE_RIGHT);
-  Mouse.move(10, 0, 0); // Move mouse right
-  delay(100);
-  Mouse.release(MOUSE_RIGHT);
-  Keyboard.release(KEY_LEFT_SHIFT);
+  if (!debug)
+  {
+    Keyboard.press(KEY_LEFT_SHIFT);
+    Mouse.press(MOUSE_RIGHT);
+    Mouse.move(10, 0, 0); // Move mouse right
+    delay(100);
+    Mouse.release(MOUSE_RIGHT);
+    Keyboard.release(KEY_LEFT_SHIFT);
+  }
 }
 
 void rotateCounterClockwise()
 {
   Serial.println("rotate counter ");
-  Keyboard.press(KEY_RIGHT_SHIFT);
-  Mouse.press(MOUSE_RIGHT);
-  Mouse.move(-10, 0, 0); // Move mouse left
-  delay(100);
-  Mouse.release(MOUSE_RIGHT);
-  Keyboard.release(KEY_RIGHT_SHIFT);
+  if (!debug)
+  {
+    Keyboard.press(KEY_RIGHT_SHIFT);
+    Mouse.press(MOUSE_RIGHT);
+    Mouse.move(-10, 0, 0); // Move mouse left
+    delay(100);
+    Mouse.release(MOUSE_RIGHT);
+    Keyboard.release(KEY_RIGHT_SHIFT);
+  }
 }
 
 void zoomIn()
 {
+
   Serial.println("zoom in");
-  Keyboard.press(KEY_RIGHT_CTRL);
-  Mouse.move(0, 0, 1); // Scroll up
-  delay(100);
-  Keyboard.release(KEY_RIGHT_CTRL);
+  if (!debug)
+  {
+    Keyboard.press(KEY_RIGHT_CTRL);
+    Mouse.move(0, 0, 1); // Scroll up
+    delay(100);
+    Keyboard.release(KEY_RIGHT_CTRL);
+  }
 }
 
 void zoomOut()
 {
   Serial.println("zoom out ");
-  Keyboard.press(KEY_RIGHT_CTRL);
-  Mouse.move(0, 0, -1); // Scroll down
-  delay(100);
-  Keyboard.release(KEY_RIGHT_CTRL);
+  if (!debug)
+  {
+    Keyboard.press(KEY_RIGHT_CTRL);
+    Mouse.move(0, 0, -1); // Scroll down
+    delay(100);
+    Keyboard.release(KEY_RIGHT_CTRL);
+  }
 }
 void handleMovement(MovementType movement)
 {
@@ -157,6 +183,13 @@ void handleMovement(MovementType movement)
     break;
   case PAN_LEFT:
     panLeft();
+    break;
+
+  case PAN_UP:
+    panUp();
+    break;
+  case PAN_DOWN:
+    panDown();
     break;
   case ROTATE_CLOCKWISE:
     rotateClockwise();
@@ -182,9 +215,19 @@ void loop()
   // if circuit playground switch is on use device as mouse
   if (CircuitPlayground.slideSwitch())
   {
-    Serial.println("hid active");
+    Mouse.begin;
+    Serial.print("hid active");
+    Serial.print("debug");
+    Serial.println(debug);
     MovementType movement = determineMovement(a, g);
     handleMovement(movement);
     delay(100); // Adjust delay as needed
+  }
+  else
+  {
+    Mouse.end;
+    Serial.print("hid not active");
+    Serial.print("debug");
+    Serial.println(debug);
   }
 }
