@@ -4,8 +4,10 @@
 #include <Mouse.h>
 #include <Keyboard.h>
 #include <Adafruit_CircuitPlayground.h>
+
 Adafruit_MPU6050 mpu;
-bool debug = 1; // set true for debug
+Adafruit_CircuitPlayground Play;
+bool debug = 0; // set true for debug
 
 enum MovementType
 {
@@ -22,13 +24,13 @@ enum MovementType
 
 void setup()
 {
-  Adafruit_CircuitPlayground CircuitPlayground;
+  Play.begin();
   // Initialize serial communication for debugging purposes
   Serial.begin(115200);
   // initiize mouse and keyboard
   Mouse.begin();
   Keyboard.begin();
-
+  Serial.println("mouse and keyboard initialized");
   // Initialize MPU6050
   if (!mpu.begin())
   {
@@ -47,8 +49,8 @@ void setup()
 MovementType determineMovement(sensors_event_t a, sensors_event_t g)
 {
   // Define thresholds for actions
-  const float panThreshold = 5.0;
-  const float rotateThreshold = 20.0;
+  const float panThreshold = 10.0;
+  const float rotateThreshold = 5.0;
   const float zoomThreshold = 15.0;
 
   // Determine action based on MPU6050 data
@@ -104,7 +106,7 @@ void panUp()
   Serial.println("pan up");
   if (!debug)
   {
-    .press(MOUSE_MIDDLE);
+    Mouse.press(MOUSE_MIDDLE);
     Mouse.move(0, 10, 0); // Move mouse right
     delay(100);
     Mouse.release(MOUSE_MIDDLE);
@@ -128,10 +130,10 @@ void rotateClockwise()
   if (!debug)
   {
     Keyboard.press(KEY_LEFT_SHIFT);
-    Mouse.press(MOUSE_RIGHT);
+    Mouse.press(MOUSE_MIDDLE);
     Mouse.move(10, 0, 0); // Move mouse right
     delay(100);
-    Mouse.release(MOUSE_RIGHT);
+    Mouse.release(MOUSE_MIDDLE);
     Keyboard.release(KEY_LEFT_SHIFT);
   }
 }
@@ -142,10 +144,10 @@ void rotateCounterClockwise()
   if (!debug)
   {
     Keyboard.press(KEY_RIGHT_SHIFT);
-    Mouse.press(MOUSE_RIGHT);
+    Mouse.press(MOUSE_MIDDLE);
     Mouse.move(-10, 0, 0); // Move mouse left
     delay(100);
-    Mouse.release(MOUSE_RIGHT);
+    Mouse.release(MOUSE_MIDDLE);
     Keyboard.release(KEY_RIGHT_SHIFT);
   }
 }
@@ -213,10 +215,10 @@ void loop()
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
   // if circuit playground switch is on use device as mouse
-  if (CircuitPlayground.slideSwitch())
+  if (!Play.slideSwitch())
   {
-    Mouse.begin;
-    Serial.print("hid active");
+    Mouse.begin();
+    Serial.println("hid active");
     Serial.print("debug");
     Serial.println(debug);
     MovementType movement = determineMovement(a, g);
@@ -225,9 +227,10 @@ void loop()
   }
   else
   {
-    Mouse.end;
+    Mouse.end();
     Serial.print("hid not active");
-    Serial.print("debug");
+    // Serial.print("debug");
     Serial.println(debug);
+    delay(100);
   }
 }
