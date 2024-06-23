@@ -47,6 +47,9 @@ void setup()
       delay(10);
     }
   }
+  // add button
+  int button = 0;
+  digitalWrite(button, HIGH);
 
   // Set accelerometer range and filter bandwidth
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
@@ -72,12 +75,12 @@ MovementType determineMovement(sensors_event_t a, sensors_event_t g)
   }
   else if (analogRead(rotX) > rotateThreshold + 50)
   {
-    //return ROTATE_COUNTERCLOCKWISE;
+    // return ROTATE_COUNTERCLOCKWISE;
   }
   else if (analogRead(rotX) < rotateThreshold - 50)
   {
 
-    //return ROTATE_CLOCKWISE;
+    // return ROTATE_CLOCKWISE;
   }
   else if (analogRead(rotY) > rotateThreshold + 50)
   {
@@ -184,108 +187,109 @@ void rotateUp()
     Mouse.release(MOUSE_MIDDLE);
     Keyboard.release(KEY_RIGHT_SHIFT);
   }
-  }
-  void rotateDown(){
-    Serial.println("rotate down");
-    if (!debug)
-    {
-      Keyboard.press(KEY_RIGHT_SHIFT);
-      Mouse.press(MOUSE_MIDDLE);
-      Mouse.move(0, -10, 0); // Move mouse left
-      delay(10);
-      Mouse.release(MOUSE_MIDDLE);
-      Keyboard.release(KEY_RIGHT_SHIFT);
-    }
-  }
-
-  void zoomIn()
+}
+void rotateDown()
+{
+  Serial.println("rotate down");
+  if (!debug)
   {
+    Keyboard.press(KEY_RIGHT_SHIFT);
+    Mouse.press(MOUSE_MIDDLE);
+    Mouse.move(0, -10, 0); // Move mouse left
+    delay(10);
+    Mouse.release(MOUSE_MIDDLE);
+    Keyboard.release(KEY_RIGHT_SHIFT);
+  }
+}
 
-    Serial.println("zoom in");
-    if (!debug)
-    {
-      // Keyboard.press(KEY_RIGHT_CTRL);
-      Mouse.move(0, 0, 1); // Scroll up
-      delay(100);
-      // Keyboard.release(KEY_RIGHT_CTRL);
-    }
-  }
+void zoomIn()
+{
 
-  void zoomOut()
+  Serial.println("zoom in");
+  if (!debug)
   {
-    Serial.println("zoom out ");
-    if (!debug)
-    {
-      // Keyboard.press(KEY_RIGHT_CTRL);
-      Mouse.move(0, 0, -1); // Scroll down
-      delay(100);
-      // Keyboard.release(KEY_RIGHT_CTRL);
-    }
+    // Keyboard.press(KEY_RIGHT_CTRL);
+    Mouse.move(0, 0, 1); // Scroll up
+    delay(100);
+    // Keyboard.release(KEY_RIGHT_CTRL);
   }
-  void handleMovement(MovementType movement)
-  {
-    switch (movement)
-    {
-    case PAN_RIGHT:
-      panRight();
-      break;
-    case PAN_LEFT:
-      panLeft();
-      break;
+}
 
-    case PAN_UP:
-      panUp();
-      break;
-    case PAN_DOWN:
-      panDown();
-      break;
-    case ROTATE_CLOCKWISE:
-      rotateClockwise();
-      break;
-    case ROTATE_COUNTERCLOCKWISE:
-      rotateCounterClockwise();
-      break;
-    case ROTATE_UP:
-      rotateUp();
-      break;
-    case ROTATE_DOWN:
-      rotateDown();
-      break;
-    case ZOOM_IN:
-      zoomIn();
-      break;
-    case ZOOM_OUT:
-      zoomOut();
-      break;
-    case NO_MOVEMENT:
-      // No action needed
-      break;
-    }
-  }
-  void loop()
+void zoomOut()
+{
+  Serial.println("zoom out ");
+  if (!debug)
   {
-    sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
-    // if circuit playground switch is on use device as mouse
-    Serial.print("rotx:");
-    Serial.println(analogRead(rotX));
-    // delay(1000);
-    if (!Play.slideSwitch())
-    {
-      Mouse.begin();
-      Serial.println("hid active");
-      Serial.print("debug");
-      Serial.println(debug);
-      MovementType movement = determineMovement(a, g);
-      handleMovement(movement);
-      delay(100); // Adjust delay as needed
-    }
-    else
-    {
-      Mouse.end();
-      // Serial.print("hid not active");
-      // Serial.print("debug");
-      // Serial.println(debug);
-      delay(100);
-    }
+    // Keyboard.press(KEY_RIGHT_CTRL);
+    Mouse.move(0, 0, -1); // Scroll down
+    delay(100);
+    // Keyboard.release(KEY_RIGHT_CTRL);
   }
+}
+void handleMovement(MovementType movement)
+{
+  switch (movement)
+  {
+  case PAN_RIGHT:
+    panRight();
+    break;
+  case PAN_LEFT:
+    panLeft();
+    break;
+
+  case PAN_UP:
+    panUp();
+    break;
+  case PAN_DOWN:
+    panDown();
+    break;
+  case ROTATE_CLOCKWISE:
+    rotateClockwise();
+    break;
+  case ROTATE_COUNTERCLOCKWISE:
+    rotateCounterClockwise();
+    break;
+  case ROTATE_UP:
+    rotateUp();
+    break;
+  case ROTATE_DOWN:
+    rotateDown();
+    break;
+  case ZOOM_IN:
+    zoomIn();
+    break;
+  case ZOOM_OUT:
+    zoomOut();
+    break;
+  case NO_MOVEMENT:
+    // No action needed
+    break;
+  }
+}
+void loop()
+{
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+  // if circuit playground switch is on use device as mouse
+  Serial.print("rotx:");
+  Serial.println(analogRead(rotX));
+  // delay(1000);
+  if (!Play.slideSwitch())
+  {
+    Mouse.begin();
+    Serial.println("hid active");
+    Serial.print("debug");
+    Serial.println(debug);
+    MovementType movement = determineMovement(a, g);
+    handleMovement(movement);
+    delay(100); // Adjust delay as needed
+  }
+  else
+  {
+    Mouse.end();
+    // Serial.print("hid not active");
+    // Serial.print("debug");
+    // Serial.println(debug);
+    delay(100);
+  }
+}
