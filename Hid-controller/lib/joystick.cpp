@@ -125,7 +125,8 @@ void parseAction(String action)
     {
 
         // sets which joystick object to add commands to on secondunderscore, parse
-        j
+
+        parseAction(actionString.substr(secondUnderscore + 1, thirdUnderscore - secondUnderscore - 1));
     }
     // Perform the keyboard or mouse action based on the action type
     if (actionType == "key")
@@ -211,4 +212,35 @@ void extractCommands(const std::string &commandList, std::vector<std::string> &a
     }
 
     // Extract the last substring, which is after the last comma.
+}
+
+void whichaxies(const std::string &rawcommand)
+{
+    // Parse the raw command looking for "?" characters
+    std::string::size_type commandlist = rawcommand.find('?');
+    // set which axis to extract this will be a number
+
+    std::vector<std::string> result =
+}
+
+std::vector<std::string> splitStringByChar(const std::string &str, char delimiter)
+{
+    std::vector<std::string> result;
+    std::string::size_type start = 0;
+    std::string::size_type end = str.find(delimiter);
+    int index = 0;
+
+    while (end != std::string::npos)
+    {
+        std::string token = str.substr(start, end - start);
+        result.push_back(std::to_string(index) + ": " + token);
+        start = end + 1;
+        end = str.find(delimiter, start);
+        index++;
+    }
+
+    std::string token = str.substr(start);
+    result.push_back(std::to_string(index) + ": " + token);
+
+    return result;
 }

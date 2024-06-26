@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <Keyboard.h>
 #include <Mouse.h>
+#include <sstream>
 
 class Joystick
 {
